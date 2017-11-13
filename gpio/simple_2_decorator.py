@@ -10,19 +10,23 @@ from time import sleep
 
 # initialize button and LED
 led = LED(4)
-button = Button(15, pull_up=False)
+button = Button(15)
 is_led_on = False
 
-# option 1
+
+def setargs(**kwargs):
+    def decorate(func):
+        for k in kwargs:
+            setattr(func, k, kwargs[k])
+        return func
+    return decorate
 
 
+@setargs(is_led_on=False, led=led)
 def on_press(btn):
-    global is_led_on
-    global led
-
     print "+ button %d: pressed" % btn.pin.number
-    led.off() if is_led_on else led.on()
-    is_led_on = not is_led_on
+    on_press.led.off() if on_press.is_led_on else on_press.led.on()
+    on_press.is_led_on = not on_press.is_led_on
 
 
 button.when_pressed = on_press
