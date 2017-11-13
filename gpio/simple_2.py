@@ -3,6 +3,9 @@
  Button connected to the pin 15.
  
  turn the LED on/off on the button press.
+ 
+ # option 1
+ using global variables in callback
 '''
 
 from gpiozero import LED, Button
@@ -12,8 +15,6 @@ from time import sleep
 led = LED(4)
 button = Button(15, pull_up=False)
 is_led_on = False
-
-# option 1
 
 
 def on_press(btn):

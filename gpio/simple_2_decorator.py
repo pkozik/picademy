@@ -3,6 +3,11 @@
  Button connected to the pin 15.
  
  turn the LED on/off on the button press.
+ 
+ # version 2.
+ decorated callback function with
+ local variable holding LED state and 
+ reference to the LED instance
 '''
 
 from gpiozero import LED, Button
@@ -14,6 +19,7 @@ button = Button(15)
 is_led_on = False
 
 
+# decorator
 def setargs(**kwargs):
     def decorate(func):
         for k in kwargs:
