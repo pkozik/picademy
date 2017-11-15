@@ -40,3 +40,18 @@ class Pixel:
         if 0 <= self.x < screen.width and 0 <= self.y < screen.height:
             # draw new pixel
             screen.set_pixel(self.pos[0], self.pos[1], self.color)
+
+
+class ReflectingPixel(Pixel):
+    def __init__(self, x, y, **kwargs):
+        Pixel.__init__(self, x, y, **kwargs)
+        self.factor = [1, 1]
+
+    def reflect_x(self):
+        self.factor[0] = self.previous[0] - self.pos[0]
+
+    def reflect_y(self):
+        self.factor[1] = self.previous[1] - self.pos[1]
+
+    def move(self, dx, dy):
+        Pixel.move(self, dx * self.factor[0], dy * self.factor[1])
