@@ -7,6 +7,11 @@ import atexit
 
 
 class Reflect:
+    """
+    decorator class adding the Pixel reflection at the edge
+    capabilities
+    """
+
     def __init__(self, pixel):
         self.decorated = pixel
         self.factor = [1, 1]
@@ -25,21 +30,21 @@ class Reflect:
 
 sense = SenseHat()
 sense.low_light = True
-atexit.register(sense.clear, (0, 0, 0))
+sense.height = 8
+sense.width = 8
+
+atexit.register(sense.clear)
 
 
-b = (0, 0, 255)
-g = (0, 255, 0)
-r = (255, 0, 0)
+b = (0, 0, 155)
+g = (0, 155, 0)
+r = (155, 0, 0)
 
-pixels = [Reflect(Pixel(5, 1, b)),
-          Reflect(Pixel(4, 4, g)),
-          Reflect(Pixel(1, 6, r))]
+pixels = [Reflect(Pixel(5, 1, color=b)),
+          Reflect(Pixel(4, 4, color=g)),
+          Reflect(Pixel(1, 6, color=r))]
 
-sense.set_pixel(6, 2, (0, 120, 90))
 try:
-    dx = 1
-    dy = 1
     while True:
         for pixel in pixels:
             pixel.move(1, 1)

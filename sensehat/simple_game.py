@@ -4,6 +4,7 @@ from sense_hat import SenseHat
 from time import sleep, time
 from random import randint
 from utils import Pixel
+import atexit
 
 
 class ReflectingPixel(Pixel):
@@ -56,37 +57,41 @@ class Scene:
 
 
 sense = SenseHat()
+atexit.register(sense.clear)
 sense.clear()
 
 sense.low_light = True
 sense.width = 8
 sense.height = 8
 
-b = (0, 0, 255)
-g = (0, 255, 0)
-r = (255, 0, 0)
+b = (0, 0, 155)
+g = (0, 155, 0)
+r = (155, 0, 0)
 o = (0, 0, 0)
 
 scene = Scene(conunt=5, interval=0.5)
 car = ReflectingPixel(4, 1, color=g)
-dx = 1
 
-while True:
-    scene.move()
-    scene.refresh(sense)
+try:
+    while True:
+        scene.move()
+        scene.refresh(sense)
 
-    if scene.has_colision(car):
-        # if hit the falling dot
-        car.reflect_x()
-        car.reflect_y()
-    else:
-        # if at the screen edge
-        if car.x <= 0 or car.x >= sense.width:
+        if scene.has_colision(car):
+            # if hit the falling dot
             car.reflect_x()
-        if car.y <= 0 or car.y >= sense.height:
             car.reflect_y()
+        else:
+            # if at the screen edge
+            if car.x <= 0 or car.x >= sense.width:
+                car.reflect_x()
+            if car.y <= 0 or car.y >= sense.height:
+                car.reflect_y()
 
-    car.move(1, 1)
-    car.refresh(sense)
+        car.move(1, 1)
+        car.refresh(sense)
 
-    sleep(0.05)
+        sleep(0.1)
+
+except KeyboardInterrupt:
+    exit(0)
