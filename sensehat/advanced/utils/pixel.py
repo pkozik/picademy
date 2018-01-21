@@ -1,10 +1,22 @@
 #!/usr/bin/python
 
 
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def clone(self):
+        return Point(self.x, self.y)
+
+
 class Pixel:
     def __init__(self, x, y, **kwargs):
-        self.pos = [x, y]
-        self.previous = [0, 0]
+        self.pos = Point(x, y)
+        self.previous = Point(0, 0)
         self.color = kwargs["color"] if kwargs and "color" in kwargs else (
             0, 0, 128)
         self.bgcolor = kwargs["bgcolor"] if kwargs and "bgcolor" in kwargs else (
@@ -12,25 +24,26 @@ class Pixel:
 
     @property
     def x(self):
-        return self.pos[0] if self.pos else None
+        return self.pos.x if self.pos else None
 
     @property
     def y(self):
-        return self.pos[1] if self.pos else None
+        return self.pos.y if self.pos else None
 
     def move(self, dx, dy):
-        self.previous = list(self.pos)
-        self.pos[0] += dx
-        self.pos[1] += dy
+        self.previous = self.pos.clone()
+        self.pos.x += dx
+        self.pos.y += dy
 
     def set_color(self, color):
         self.color = color
 
     def clear(self, screen):
-        if 0 <= self.previous[0] < screen.width and 0 <= self.previous[1] < screen.height:
-            screen.set_pixel(self.previous[0], self.previous[1], self.bgcolor)
+        if 0 <= self.previous.x < screen.width and 0 <= self.previous.y < screen.height:
+            screen.set_pixel(self.previous.x, self.previous.y, self.bgcolor)
 
     def refresh(self, screen):
+        # nothing happened
         if self.pos == self.previous:
             return
 
@@ -39,7 +52,7 @@ class Pixel:
         # if we are still in the range of the screen
         if 0 <= self.x < screen.width and 0 <= self.y < screen.height:
             # draw new pixel
-            screen.set_pixel(self.pos[0], self.pos[1], self.color)
+            screen.set_pixel(self.pos.x, self.pos.y, self.color)
 
 
 class ReflectingPixel(Pixel):
@@ -48,10 +61,10 @@ class ReflectingPixel(Pixel):
         self.factor = [1, 1]
 
     def reflect_x(self):
-        self.factor[0] = self.previous[0] - self.pos[0]
+        self.factor[0] = self.previous.x - self.pos.x
 
     def reflect_y(self):
-        self.factor[1] = self.previous[1] - self.pos[1]
+        self.factor[1] = self.previous.y - self.pos.y
 
     def move(self, dx, dy):
         Pixel.move(self, dx * self.factor[0], dy * self.factor[1])
