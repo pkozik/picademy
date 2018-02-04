@@ -25,6 +25,19 @@ class Pixel(Point):
         screen.set_pixel(self.x, self.y, (0, 0, 0))
 
 
+class Dot(Pixel):
+    def __init__(self, x, y, color, screen):
+        Pixel.__init__(self, x, y, color)
+        self.screen = screen
+        self.draw(screen)
+
+    def move(self, dx, dy):
+        self.clear(self.screen)
+        self.y += dy
+        self.x += dx
+        self.draw(self.screen)
+
+
 class PixelSet:
     def __init__(self, *pixels):
         self.pixels = pixels
@@ -43,6 +56,7 @@ class LedBar:
     green = (0, 255, 0)
     blue = (0, 0, 255)
     yellow = (255, 255, 0)
+    orange = (255, 100, 0)
 
     def __init__(self, pos, screen):
         self.pos = pos
@@ -51,7 +65,7 @@ class LedBar:
             Pixel(0, self.pos, self.blue),
             Pixel(1, self.pos, self.green),
             Pixel(2, self.pos, self.yellow),
-            Pixel(3, self.pos, self.red),
+            Pixel(3, self.pos, self.orange),
             Pixel(4, self.pos, self.red),
             Pixel(5, self.pos, self.red),
             Pixel(6, self.pos, self.red),

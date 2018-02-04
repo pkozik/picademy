@@ -3,7 +3,7 @@
 '''
 
 from sense_hat import SenseHat, ACTION_RELEASED
-from point import Pixel, LedBar
+from point import Dot, LedBar
 from signal import pause
 import atexit
 
@@ -21,18 +21,12 @@ class Device:
     def __init__(self, idx):
         self.ledbar = LedBar(idx, sense)
         self.id = idx
-        self.pix = Pixel(7, idx, (0, 200, 200))
         self.selected = False
 
     # callback called whenever the joystick changes
     # the slot selection
     def selectionRefresh(self, slot):
-        if slot == self.id:
-            self.selected = True
-            self.pix.draw(sense)
-        else:
-            self.selected = False
-            self.pix.clear(sense)
+        self.selected = (slot == self.id)
 
     # must be overwritten in derived class
     # It will be called whenever the joystick changes the
@@ -60,12 +54,12 @@ class Heating(Device):
 
     def coolDown(self):
         self.ledbar.down()
-        print("Heating %d down" % self.id)
+        print("slot %d > Heating down" % self.id)
 
     def heatUp(self):
         if self.ledbar.current < 6:
             self.ledbar.up()
-            print("Heating %d up" % self.id)
+            print("slot %d > Heating up" % self.id)
 
 
 class Lights(Device):
@@ -77,12 +71,12 @@ class Lights(Device):
 
     def dark(self):
         self.ledbar.down()
-        print("Light %d down" % self.id)
+        print("slot %d > Light down" % self.id)
 
     def bright(self):
         if self.ledbar.current < 4:
             self.ledbar.up()
-            print("Light %d up" % self.id)
+            print("slot %d > Light up" % self.id)
 
 
 class Stereo(Device):
@@ -94,12 +88,12 @@ class Stereo(Device):
 
     def silent(self):
         self.ledbar.down()
-        print("Stereo %d down" % self.id)
+        print("slot %d > Stereo down" % self.id)
 
     def loud(self):
         if self.ledbar.current < 5:
             self.ledbar.up()
-            print("Stereo %d up" % self.id)
+            print("slot %d > Stereo up" % self.id)
 
 
 #====================================================
@@ -117,6 +111,7 @@ class Joystick:
         # list of observers
         self.devices = []
         self.slot = 0
+        self.slotSelector = Dot(7, 0, (255, 0, 100), sense)
 
         # just some senseHat joystick initialization
         sense.stick.direction_up = self.slotChanged
@@ -147,9 +142,12 @@ class Joystick:
             if event.direction == "down":
                 if self.slot < len(self.devices) - 1:
                     self.slot += 1
+                    self.slotSelector.move(0, 1)
+
             if event.direction == "up":
                 if self.slot > 0:
                     self.slot -= 1
+                    self.slotSelector.move(0, -1)
 
             self.notify(slot=self.slot)
 
