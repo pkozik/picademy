@@ -1,5 +1,5 @@
 from sense_hat import SenseHat, ACTION_RELEASED
-from point import Pixel, LedBar, Dot
+from point import LedBar, Dot
 from signal import pause
 import atexit
 
